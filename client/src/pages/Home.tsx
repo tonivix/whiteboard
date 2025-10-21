@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { saveWhiteboard } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -266,6 +267,17 @@ export default function Home() {
     setPanOffset({ x: 0, y: 0 });
   };
 
+  const saveToServer = async () => {
+    try {
+      // Example usage of vulnerable axios 0.21.1
+      await saveWhiteboard({ shapes, timestamp: Date.now() });
+      alert("Whiteboard saved successfully!");
+    } catch (error) {
+      console.error("Failed to save:", error);
+      alert("Failed to save whiteboard");
+    }
+  };
+
   const exportCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -293,6 +305,10 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-gray-900">Collaborative Whiteboard</h1>
           <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={saveToServer}>
+              <Download className="w-4 h-4 mr-2" />
+              Save
+            </Button>
             <Button variant="outline" size="sm" onClick={exportCanvas}>
               <Download className="w-4 h-4 mr-2" />
               Export
